@@ -28,11 +28,11 @@ public class SwaggerConfig {
 
     private ApiInfo apiInfo() {
         return new ApiInfo(
-                "Sabhriti DSL REST APi",
-                "Rest APi for Sabhriti DSL functionalities",
+                "Sabhriti REST APi",
+                "Rest API for Sabhriti",
                 "1.0",
                 "Terms of service",
-                new Contact("Sabhriti", "www.sabhriti.com", "sabhriti@gmail.com"),
+                new Contact("Sabhriti", "www.sabhriti.org", "info@sabhriti.org"),
                 "All Rights Reserved",
                 "none",
                 List.of());

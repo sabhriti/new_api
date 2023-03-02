@@ -1,9 +1,8 @@
 package org.sabhriti.api.controller;
 
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.sabhriti.api.dal.model.User;
-import org.sabhriti.api.dal.repository.UserRepository;
+import org.sabhriti.api.service.user.UserService;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -11,19 +10,28 @@ import reactor.core.publisher.Mono;
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
-@Tag(name = "Test APIs", description = "Test APIs for demo purpose")
 public class UserController {
 
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     @GetMapping
-    public Flux<User> getAll() {
-        return this.userRepository.findAll();
+    public Flux<User> allFactories() {
+        return this.userService.getAll();
     }
 
-    @DeleteMapping("/{userId}")
-    public Mono<Void> deleteByUserId(@PathVariable String userId) {
-        return this.userRepository.deleteUserById(userId);
-
+    @PostMapping
+    public Mono<User> addNew(@RequestBody User user) {
+        return this.userService.addNew(user);
     }
+
+    @GetMapping("/id={userId}")
+    public Mono<User> findById(@PathVariable String userId) {
+        return this.userService.findOneById(userId);
+    }
+
+    @DeleteMapping("/id={userId}")
+    public Mono<Void> delete(@PathVariable String userId) {
+        return this.userService.deleteById(userId);
+    }
+
 }

@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.web.reactive.config.EnableWebFlux;
 
-@SpringBootApplication(scanBasePackages = {"org.sabhriti.api"})
+@SpringBootApplication
 @EnableWebFlux
 @EnableMongoAuditing
 public class ApiApplication {
