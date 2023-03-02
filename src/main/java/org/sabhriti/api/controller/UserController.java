@@ -33,5 +33,4 @@ public class UserController {
     public Mono<Void> delete(@PathVariable String userId) {
         return this.userService.deleteById(userId);
     }
-
 }
