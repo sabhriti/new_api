@@ -19,7 +19,7 @@ public class QuestionController {
         return this.questionService.getAllQuestions();
     }
 
-    @PostMapping
+    @PostMapping("/")
     public Mono<Question> addNew(@RequestBody Question question) {
         return this.questionService.addNew(question);
     }
