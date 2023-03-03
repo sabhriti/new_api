@@ -5,7 +5,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface QuestionService {
-    Flux<Question> getAllQuestions();
+    Flux<Question> getAll();
 
     Mono<Question> addNew(Question question);
 

@@ -14,7 +14,7 @@ public class QuestionServiceImpl implements QuestionService {
     private final QuestionRepository questionRepository;
 
     @Override
-    public Flux<Question> getAllQuestions() {
+    public Flux<Question> getAll() {
         return this.questionRepository.findAll();
     }
 

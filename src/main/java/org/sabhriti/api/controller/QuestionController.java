@@ -16,7 +16,7 @@ public class QuestionController {
 
     @GetMapping()
     public Flux<Question> allQuestions() {
-        return this.questionService.getAllQuestions();
+        return this.questionService.getAll();
     }
 
     @PostMapping("/")
