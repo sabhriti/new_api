@@ -1,0 +1,69 @@
+package org.sabhriti.api.service.security;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+import org.sabhriti.api.dal.model.user.Role;
+import org.sabhriti.api.dal.model.user.User;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import java.io.Serializable;
+import java.util.Base64;
+import java.util.Date;
+import java.util.function.Function;
+
+import static org.sabhriti.api.service.security.AuthenticationManager.AUTHORITIES_KEY;
+
+@Component
+public class TokenProvider implements Serializable {
+
+    @Value("${security.jwt.token.secret-key}")
+    private String secretKey;
+
+    @Value("${security.jwt.token.expire-length}")
+    private Integer tokenValidity;
+
+    public String getUsernameFromToken(String token) {
+        return this.getClaimFromToken(token, Claims::getSubject);
+    }
+
+    public Date getExpirationDateFromToken(String token) {
+        return this.getClaimFromToken(token, Claims::getExpiration);
+    }
+
+    public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
+        return claimsResolver.apply(this.getAllClaimsFromToken(token));
+    }
+
+    public Claims getAllClaimsFromToken(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(Keys.secretKeyFor(SignatureAlgorithm.HS256))
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+    public Boolean isTokenExpired(String token) {
+        return this.getExpirationDateFromToken(token).before(new Date());
+    }
+
+    public String generateToken(User user) {
+        final var authorities = user
+                .getRoles()
+                .stream()
+                .map(Role::name)
+                .toList();
+
+        Keys.secretKeyFor(SignatureAlgorithm.HS256);
+
+        return Jwts.builder()
+                .setSubject(user.getUsername())
+                .claim(AUTHORITIES_KEY, authorities)
+                .signWith(Keys.secretKeyFor(SignatureAlgorithm.HS256), SignatureAlgorithm.HS256)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + this.tokenValidity * 1000))
+                .compact();
+    }
+}

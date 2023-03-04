@@ -1,4 +1,4 @@
-package org.sabhriti.api.config;
+package org.sabhriti.api.web.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.config.EnableWebFlux;

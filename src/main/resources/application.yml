@@ -1,1 +1,10 @@
 server.port: 9090
+security:
+  cors:
+    allowed-headers: "*" #comma seperated headers
+    allowed-methods: "*" #comma seperated methods
+    allowed-origins: "*" #comma seperated url list
+  jwt:
+    token:
+      secret-key: thismustbeverysecret
+      expire-length: 3600000 #in milliseconds (i.e. 1 hour)

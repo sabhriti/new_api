@@ -1,15 +1,16 @@
 package org.sabhriti.api.service.user;
 
 import lombok.RequiredArgsConstructor;
-import org.sabhriti.api.dal.model.User;
+import org.sabhriti.api.dal.model.user.User;
 import org.sabhriti.api.dal.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
+
     private final UserRepository userRepository;
 
     @Override
@@ -25,6 +26,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public Mono<User> findOneById(String userId) {
         return this.userRepository.findById(userId);
+    }
+
+    @Override
+    public Mono<User> findByUsername(String username) {
+        return this.userRepository.findUserByUsername(username);
     }
 
     @Override

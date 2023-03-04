@@ -1,4 +1,4 @@
-package org.sabhriti.api.controller;
+package org.sabhriti.api.web.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.sabhriti.api.dal.model.Question;

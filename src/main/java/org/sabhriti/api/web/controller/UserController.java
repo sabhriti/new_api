@@ -1,7 +1,7 @@
-package org.sabhriti.api.controller;
+package org.sabhriti.api.web.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.sabhriti.api.dal.model.User;
+import org.sabhriti.api.dal.model.user.User;
 import org.sabhriti.api.service.user.UserService;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
@@ -15,13 +15,8 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public Flux<User> allFactories() {
+    public Flux<User> allUsers() {
         return this.userService.getAll();
-    }
-
-    @PostMapping
-    public Mono<User> addNew(@RequestBody User user) {
-        return this.userService.addNew(user);
     }
 
     @GetMapping("/id={userId}")
