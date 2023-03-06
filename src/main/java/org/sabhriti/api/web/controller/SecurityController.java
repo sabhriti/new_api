@@ -3,6 +3,8 @@ package org.sabhriti.api.web.controller;
 import lombok.RequiredArgsConstructor;
 import org.sabhriti.api.dal.model.user.Role;
 import org.sabhriti.api.dal.model.user.User;
+import org.sabhriti.api.dal.model.user.UserActivationStatus;
+import org.sabhriti.api.dal.model.user.UserRoles;
 import org.sabhriti.api.service.security.TokenProvider;
 import org.sabhriti.api.service.user.UserService;
 import org.sabhriti.api.web.dto.LoginRequest;
@@ -31,11 +33,15 @@ public class SecurityController {
 
     @PostMapping("/signup")
     Mono<ResponseEntity<String>> signUp(@RequestBody SignupRequest signupRequest) {
+        var defaultRole = new Role();
+        defaultRole.setName(UserRoles.USER);
+
         var userToStore = new User();
         userToStore.setPassword(this.passwordEncoder.encode(signupRequest.password()));
         userToStore.setUsername(signupRequest.username());
         userToStore.setEmail(signupRequest.email());
-        userToStore.setRoles(List.of(new Role("USER")));
+        userToStore.setRoles(List.of(defaultRole));
+        userToStore.setActivationStatus(UserActivationStatus.NEW);
 
         return this.userService
                 .findByUsername(signupRequest.username())

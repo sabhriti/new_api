@@ -25,5 +25,7 @@ public class User {
 
     private String password;
 
+    private String activationStatus = UserActivationStatus.INACTIVE;
+
     private List<Role> roles;
 }

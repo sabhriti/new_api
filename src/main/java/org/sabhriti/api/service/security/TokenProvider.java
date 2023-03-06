@@ -59,7 +59,7 @@ public class TokenProvider implements Serializable {
         final var authorities = user
                 .getRoles()
                 .stream()
-                .map(Role::name)
+                .map(Role::getName)
                 .toList();
 
         long nowMillis = System.currentTimeMillis();

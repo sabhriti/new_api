@@ -19,9 +19,19 @@ public class UserController {
         return this.userService.getAll();
     }
 
+    @PostMapping
+    public Mono<User> addNew(@RequestBody User user) {
+        return this.userService.addNew(user);
+    }
+
     @GetMapping("/id={userId}")
     public Mono<User> findById(@PathVariable String userId) {
         return this.userService.findOneById(userId);
+    }
+
+    @GetMapping("/username={username}")
+    public Mono<User> findByUsername(@PathVariable String username) {
+        return this.userService.findByUsername(username);
     }
 
     @DeleteMapping("/id={userId}")
