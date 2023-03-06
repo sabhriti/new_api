@@ -2,6 +2,7 @@ package org.sabhriti.api.service.security;
 
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -15,9 +16,10 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Component
+@Slf4j
 public class AuthenticationManager implements ReactiveAuthenticationManager {
 
-    public static final String AUTHORITIES_KEY = "scopes";
+    public static final String AUTHORITIES_KEY = "ROLES";
 
     private final TokenProvider tokenProvider;
 
@@ -29,6 +31,7 @@ public class AuthenticationManager implements ReactiveAuthenticationManager {
         try {
             username = tokenProvider.getUsernameFromToken(authToken);
         } catch (Exception e) {
+            log.error(e.getMessage());
             username = null;
         }
         if (username != null && !tokenProvider.isTokenExpired(authToken)) {

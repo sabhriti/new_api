@@ -6,6 +6,7 @@ import org.sabhriti.api.dal.model.user.User;
 import org.sabhriti.api.service.security.TokenProvider;
 import org.sabhriti.api.service.user.UserService;
 import org.sabhriti.api.web.dto.LoginRequest;
+import org.sabhriti.api.web.dto.SignupRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -29,14 +30,15 @@ public class SecurityController {
     private final TokenProvider tokenProvider;
 
     @PostMapping("/signup")
-    Mono<ResponseEntity<String>> signUp(@RequestBody LoginRequest loginRequest) {
+    Mono<ResponseEntity<String>> signUp(@RequestBody SignupRequest signupRequest) {
         var userToStore = new User();
-        userToStore.setPassword(this.passwordEncoder.encode(loginRequest.password()));
-        userToStore.setUsername(loginRequest.username());
+        userToStore.setPassword(this.passwordEncoder.encode(signupRequest.password()));
+        userToStore.setUsername(signupRequest.username());
+        userToStore.setEmail(signupRequest.email());
         userToStore.setRoles(List.of(new Role("USER")));
 
         return this.userService
-                .findByUsername(loginRequest.username())
+                .findByUsername(signupRequest.username())
                 .flatMap(user -> this.createResponseForBadRequest("User already exist"))
                 .switchIfEmpty(this.userService.addNew(userToStore).flatMap(user -> this.createCreatedResponse()));
     }
@@ -46,14 +48,14 @@ public class SecurityController {
         return this.userService
                 .findByUsername(loginRequest.username())
                 .flatMap(user -> this.handleValidUser(loginRequest, user))
-                .switchIfEmpty(this.createResponseForBadRequest("User does not exist"));
+                .switchIfEmpty(this.createResponseForBadRequest("Invalid username"));
     }
 
     private Mono<ResponseEntity<String>> handleValidUser(LoginRequest loginRequest, User user) {
         if (this.passwordMatches(loginRequest, user)) {
             return this.createTokenResponse(user);
         } else {
-            return this.createResponseForBadRequest("Invalid credentials");
+            return this.createResponseForBadRequest("Invalid password");
         }
     }
 
@@ -66,7 +68,7 @@ public class SecurityController {
     }
 
     private Mono<ResponseEntity<String>> createCreatedResponse() {
-        return Mono.just(new ResponseEntity<>("new user created", HttpStatus.OK));
+        return Mono.just(new ResponseEntity<>("New user created", HttpStatus.OK));
     }
 
     private Mono<ResponseEntity<String>> createResponseForBadRequest(String message) {

@@ -3,14 +3,15 @@ package org.sabhriti.api.service.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
 import org.sabhriti.api.dal.model.user.Role;
 import org.sabhriti.api.dal.model.user.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import javax.xml.bind.DatatypeConverter;
 import java.io.Serializable;
-import java.util.Base64;
 import java.util.Date;
 import java.util.function.Function;
 
@@ -39,7 +40,7 @@ public class TokenProvider implements Serializable {
 
     public Claims getAllClaimsFromToken(String token) {
         return Jwts.parserBuilder()
-                .setSigningKey(Keys.secretKeyFor(SignatureAlgorithm.HS256))
+                .setSigningKey(this.generateSigningKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
@@ -49,6 +50,11 @@ public class TokenProvider implements Serializable {
         return this.getExpirationDateFromToken(token).before(new Date());
     }
 
+    public SecretKey generateSigningKey() {
+        byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(this.secretKey);
+        return new SecretKeySpec(apiKeySecretBytes, SignatureAlgorithm.HS256.getJcaName());
+    }
+
     public String generateToken(User user) {
         final var authorities = user
                 .getRoles()
@@ -56,14 +62,14 @@ public class TokenProvider implements Serializable {
                 .map(Role::name)
                 .toList();
 
-        Keys.secretKeyFor(SignatureAlgorithm.HS256);
+        long nowMillis = System.currentTimeMillis();
 
         return Jwts.builder()
                 .setSubject(user.getUsername())
                 .claim(AUTHORITIES_KEY, authorities)
-                .signWith(Keys.secretKeyFor(SignatureAlgorithm.HS256), SignatureAlgorithm.HS256)
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + this.tokenValidity * 1000))
+                .signWith(this.generateSigningKey())
+                .setIssuedAt(new Date(nowMillis))
+                .setExpiration(new Date(nowMillis + this.tokenValidity * 1000))
                 .compact();
     }
 }
