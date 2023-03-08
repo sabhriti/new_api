@@ -1,6 +1,7 @@
 package org.sabhriti.api.web.error;
 
 import lombok.extern.slf4j.Slf4j;
+import org.sabhriti.api.service.exception.AlreadyExistsException;
 import org.sabhriti.api.web.dto.ErrorResponse;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.autoconfigure.web.reactive.error.AbstractErrorWebExceptionHandler;
@@ -44,18 +45,22 @@ public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHan
     }
 
     private Mono<ServerResponse> renderErrorResponse(ServerRequest request) {
+        var error = getError(request);
 
-
-        Throwable error = getError(request);
         log.error("An error has been occurred", error);
-        HttpStatus httpStatus;
-        if (error instanceof Exception exception) {
-            System.out.println("hey");
-            httpStatus = exceptionToStatusCode.getOrDefault(exception.getClass(), defaultStatus);
-        } else {
-            System.out.println("ho");
-            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+
+        if (error instanceof AlreadyExistsException) {
+            return this.createResponse(HttpStatus.BAD_REQUEST, error);
         }
+
+        if (error instanceof Exception exception) {
+            return this.createResponse(exceptionToStatusCode.getOrDefault(exception.getClass(), defaultStatus), error);
+        }
+
+        return this.createResponse(HttpStatus.INTERNAL_SERVER_ERROR, error);
+    }
+
+    private  Mono<ServerResponse> createResponse(HttpStatus httpStatus, Throwable error) {
         return ServerResponse
                 .status(httpStatus)
                 .contentType(MediaType.APPLICATION_JSON)

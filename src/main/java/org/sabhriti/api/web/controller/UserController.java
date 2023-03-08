@@ -20,8 +20,8 @@ public class UserController {
     }
 
     @PostMapping
-    public Mono<User> addNew(@RequestBody User user) {
-        return this.userService.addNew(user);
+    public Mono<Object> save(@RequestBody User user) {
+        return this.userService.save(user);
     }
 
     @GetMapping("/id={userId}")

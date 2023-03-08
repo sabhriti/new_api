@@ -27,5 +27,5 @@ public class User {
 
     private String activationStatus = UserActivationStatus.INACTIVE;
 
-    private List<Role> roles;
+    private List<String> roles;
 }

@@ -3,7 +3,6 @@ package org.sabhriti.api.service.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.sabhriti.api.dal.model.user.Role;
 import org.sabhriti.api.dal.model.user.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -56,17 +55,11 @@ public class TokenProvider implements Serializable {
     }
 
     public String generateToken(User user) {
-        final var authorities = user
-                .getRoles()
-                .stream()
-                .map(Role::getName)
-                .toList();
-
         long nowMillis = System.currentTimeMillis();
 
         return Jwts.builder()
                 .setSubject(user.getUsername())
-                .claim(AUTHORITIES_KEY, authorities)
+                .claim(AUTHORITIES_KEY, user.getRoles())
                 .signWith(this.generateSigningKey())
                 .setIssuedAt(new Date(nowMillis))
                 .setExpiration(new Date(nowMillis + this.tokenValidity * 1000))

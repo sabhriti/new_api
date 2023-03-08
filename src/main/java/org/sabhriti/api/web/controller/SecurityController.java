@@ -1,7 +1,6 @@
 package org.sabhriti.api.web.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.sabhriti.api.dal.model.user.Role;
 import org.sabhriti.api.dal.model.user.User;
 import org.sabhriti.api.dal.model.user.UserActivationStatus;
 import org.sabhriti.api.dal.model.user.UserRoles;
@@ -33,20 +32,15 @@ public class SecurityController {
 
     @PostMapping("/signup")
     Mono<ResponseEntity<String>> signUp(@RequestBody SignupRequest signupRequest) {
-        var defaultRole = new Role();
-        defaultRole.setName(UserRoles.USER);
-
         var userToStore = new User();
+        userToStore.setName(signupRequest.name());
         userToStore.setPassword(this.passwordEncoder.encode(signupRequest.password()));
         userToStore.setUsername(signupRequest.username());
         userToStore.setEmail(signupRequest.email());
-        userToStore.setRoles(List.of(defaultRole));
+        userToStore.setRoles(List.of(UserRoles.USER));
         userToStore.setActivationStatus(UserActivationStatus.NEW);
 
-        return this.userService
-                .findByUsername(signupRequest.username())
-                .flatMap(user -> this.createResponseForBadRequest("User already exist"))
-                .switchIfEmpty(this.userService.addNew(userToStore).flatMap(user -> this.createCreatedResponse()));
+        return this.userService.save(userToStore).flatMap(o -> this.createUserCreatedResponse());
     }
 
     @PostMapping("/login")
@@ -73,7 +67,7 @@ public class SecurityController {
         return Mono.just(new ResponseEntity<>(this.tokenProvider.generateToken(user), HttpStatus.OK));
     }
 
-    private Mono<ResponseEntity<String>> createCreatedResponse() {
+    private Mono<ResponseEntity<String>> createUserCreatedResponse() {
         return Mono.just(new ResponseEntity<>("New user created", HttpStatus.OK));
     }
 
