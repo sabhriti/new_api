@@ -8,4 +8,5 @@ import java.time.LocalDateTime;
 
 public interface UserTokenService {
     Mono<UserToken> createFor(User user, String reason, LocalDateTime expiresOn);
+    Mono<UserToken> findByToken(String token);
 }

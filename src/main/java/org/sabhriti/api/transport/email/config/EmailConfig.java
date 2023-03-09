@@ -17,16 +17,16 @@ public class EmailConfig {
 
     public static final String EMAIL_TEMPLATE_ENCODING = "UTF-8";
 
-    @Value("${mail.host")
+    @Value("${mail.host}")
     private String host;
 
-    @Value("${mail.port")
+    @Value("${mail.port}")
     private Integer port;
 
-    @Value("${mail.username")
+    @Value("${mail.username}")
     private String username;
 
-    @Value("${mail.password")
+    @Value("${mail.password}")
     private String password;
 
     @Bean

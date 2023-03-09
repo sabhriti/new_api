@@ -32,6 +32,8 @@ public class SecurityConfig {
                 .authorizeExchange()
                 .pathMatchers("/security/login/**").permitAll()
                 .pathMatchers("/security/signup/**").permitAll()
+                .pathMatchers("/security/create-password/**").permitAll()
+                .pathMatchers("/user-token/validate/**").permitAll()
                 .pathMatchers(HttpMethod.OPTIONS).permitAll()
                 .anyExchange().authenticated()
                 .and()

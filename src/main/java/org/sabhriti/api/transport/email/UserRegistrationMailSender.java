@@ -6,7 +6,6 @@ import org.sabhriti.api.dal.model.user.UserToken;
 import org.sabhriti.api.dal.model.user.UserTokenUsage;
 import org.sabhriti.api.service.exception.FailedSendingMailException;
 import org.sabhriti.api.service.user.token.UserTokenService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;

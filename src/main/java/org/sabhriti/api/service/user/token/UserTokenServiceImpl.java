@@ -24,7 +24,12 @@ public class UserTokenServiceImpl implements UserTokenService {
         userToken.setUsage(reason);
         userToken.setExpiresOn(expiresOn);
         userToken.setToken(UUID.randomUUID().toString());
+        userToken.setIsUsed(false);
 
         return this.userTokenRepository.save(userToken);
+    }
+
+    public Mono<UserToken> findByToken(String token) {
+        return this.userTokenRepository.findUserTokenByToken(token);
     }
 }

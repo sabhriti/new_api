@@ -21,4 +21,8 @@ public class UserToken {
     private LocalDateTime expiresOn;
 
     private String usage;
+
+    private Boolean isUsed;
+
+    private LocalDateTime usedAt;
 }

@@ -4,19 +4,20 @@ import lombok.RequiredArgsConstructor;
 import org.sabhriti.api.dal.model.user.User;
 import org.sabhriti.api.dal.model.user.UserActivationStatus;
 import org.sabhriti.api.dal.model.user.UserRoles;
+import org.sabhriti.api.service.exception.NotFoundException;
 import org.sabhriti.api.service.security.TokenProvider;
 import org.sabhriti.api.service.user.UserService;
+import org.sabhriti.api.service.user.token.UserTokenService;
+import org.sabhriti.api.web.dto.CreatePasswordRequest;
 import org.sabhriti.api.web.dto.LoginRequest;
 import org.sabhriti.api.web.dto.SignupRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -25,6 +26,8 @@ import java.util.List;
 public class SecurityController {
 
     private final UserService userService;
+
+    private final UserTokenService userTokenService;
 
     private final BCryptPasswordEncoder passwordEncoder;
 
@@ -41,6 +44,24 @@ public class SecurityController {
         userToStore.setActivationStatus(UserActivationStatus.NEW);
 
         return this.userService.save(userToStore).flatMap(o -> this.createUserCreatedResponse());
+    }
+
+    @PostMapping("/create-password")
+    Mono<Object> createPassword(@RequestBody CreatePasswordRequest signupRequest) {
+        return this.userTokenService
+                .findByToken(signupRequest.token())
+                .flatMap(userToken -> {
+                    if (!userToken.getIsUsed() && userToken.getExpiresOn().isBefore(LocalDateTime.now())) {
+                        return this.userService
+                                .findOneById(userToken.getUserId())
+                                .flatMap(user -> {
+                                    user.setPassword(this.passwordEncoder.encode(signupRequest.password()));
+                                    return this.userService.save(user);
+                                });
+                    } else {
+                        return Mono.error(new NotFoundException("The user you looking to update password was not found."));
+                    }
+                });
     }
 
     @PostMapping("/login")
