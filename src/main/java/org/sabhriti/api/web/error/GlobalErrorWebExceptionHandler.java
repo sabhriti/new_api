@@ -2,6 +2,7 @@ package org.sabhriti.api.web.error;
 
 import lombok.extern.slf4j.Slf4j;
 import org.sabhriti.api.service.exception.AlreadyExistsException;
+import org.sabhriti.api.service.exception.InvalidTokenException;
 import org.sabhriti.api.service.exception.NotFoundException;
 import org.sabhriti.api.web.dto.ErrorResponse;
 import org.springframework.boot.autoconfigure.web.WebProperties;
@@ -54,7 +55,7 @@ public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHan
             return this.createResponse(HttpStatus.BAD_REQUEST, error);
         }
 
-        if (error instanceof NotFoundException) {
+        if (error instanceof NotFoundException  || error instanceof InvalidTokenException) {
             return this.createResponse(HttpStatus.NOT_FOUND, error);
         }
 

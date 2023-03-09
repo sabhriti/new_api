@@ -35,7 +35,7 @@ public class UserRegistrationMailSender {
 
     private final JavaMailSender emailSender;
 
-    @Value("${mail.from")
+    @Value("${mail.from}")
     private String from;
 
     public Mono<User> sendPasswordCreationEmail(User user) {
@@ -48,7 +48,7 @@ public class UserRegistrationMailSender {
                 .flatMap(userToken -> {
                     try {
                         final Context context = this.createMailContext(user.getName(), userToken);
-                        emailSender.send(this.createMessage(user, context));
+                        this.emailSender.send(this.createMessage(user, context));
                         return Mono.just(user);
                     } catch (Exception exception) {
                         return Mono.error(

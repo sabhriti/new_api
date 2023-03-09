@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.sabhriti.api.dal.model.user.User;
 import org.sabhriti.api.dal.model.user.UserActivationStatus;
 import org.sabhriti.api.dal.model.user.UserRoles;
+import org.sabhriti.api.service.exception.InvalidTokenException;
 import org.sabhriti.api.service.exception.NotFoundException;
 import org.sabhriti.api.service.security.TokenProvider;
 import org.sabhriti.api.service.user.UserService;
@@ -51,17 +52,17 @@ public class SecurityController {
         return this.userTokenService
                 .findByToken(signupRequest.token())
                 .flatMap(userToken -> {
-                    if (!userToken.getIsUsed() && userToken.getExpiresOn().isBefore(LocalDateTime.now())) {
+                    if (!userToken.getIsUsed() && userToken.getExpiresOn().isAfter(LocalDateTime.now())) {
                         return this.userService
                                 .findOneById(userToken.getUserId())
                                 .flatMap(user -> {
                                     user.setPassword(this.passwordEncoder.encode(signupRequest.password()));
                                     return this.userService.save(user);
-                                });
+                                }).switchIfEmpty(Mono.error(new NotFoundException("'User associated with the token cannot be located in database.")));
                     } else {
-                        return Mono.error(new NotFoundException("The user you looking to update password was not found."));
+                        return Mono.error(new InvalidTokenException("The token has been already used."));
                     }
-                });
+                }).switchIfEmpty(Mono.error(new NotFoundException("Invalid token provided. Cannot be located in database.")));
     }
 
     @PostMapping("/login")
