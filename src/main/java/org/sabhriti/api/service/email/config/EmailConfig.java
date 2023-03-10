@@ -1,4 +1,4 @@
-package org.sabhriti.api.transport.email.config;
+package org.sabhriti.api.service.email.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

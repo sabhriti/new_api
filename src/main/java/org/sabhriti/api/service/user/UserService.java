@@ -9,9 +9,13 @@ public interface UserService {
 
     Mono<Object> save(User user);
 
+    Mono<User> updatePassword(String password, User user);
+
     Mono<User> findOneById(String userId);
 
     Mono<User> findByUsername(String username);
+
+    Mono<User> findByEmail(String username);
 
     Mono<Void> deleteById(String userId);
 }

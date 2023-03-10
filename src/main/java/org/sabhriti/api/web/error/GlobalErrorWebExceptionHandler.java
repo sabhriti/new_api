@@ -2,6 +2,7 @@ package org.sabhriti.api.web.error;
 
 import lombok.extern.slf4j.Slf4j;
 import org.sabhriti.api.service.exception.AlreadyExistsException;
+import org.sabhriti.api.service.exception.BadPasswordException;
 import org.sabhriti.api.service.exception.InvalidTokenException;
 import org.sabhriti.api.service.exception.NotFoundException;
 import org.sabhriti.api.web.dto.ErrorResponse;
@@ -18,6 +19,7 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.*;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -51,7 +53,7 @@ public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHan
 
         log.error("An error has been occurred", error);
 
-        if (error instanceof AlreadyExistsException) {
+        if (error instanceof AlreadyExistsException || error instanceof BadPasswordException) {
             return this.createResponse(HttpStatus.BAD_REQUEST, error);
         }
 

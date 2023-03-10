@@ -1,4 +1,4 @@
-package org.sabhriti.api.transport.email;
+package org.sabhriti.api.service.email;
 
 import lombok.RequiredArgsConstructor;
 import org.sabhriti.api.dal.model.user.User;
@@ -23,7 +23,7 @@ import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
-public class UserRegistrationMailSender {
+public class PasswordCreationEmailService {
 
     private static final String CREATE_NEW_PASSWORD_TEMPLATE_NAME = "mail/new-password";
 
@@ -35,10 +35,10 @@ public class UserRegistrationMailSender {
 
     private final JavaMailSender emailSender;
 
-    @Value("${mail.from}")
+    @Value("${company.noReplyEmail}")
     private String from;
 
-    public Mono<User> sendPasswordCreationEmail(User user) {
+    public Mono<User> sendMail(User user) {
         var now = LocalDateTime.now();
         var expiresOn = now.plusHours(24);
 
@@ -63,12 +63,12 @@ public class UserRegistrationMailSender {
     private Context createMailContext(String name, UserToken userToken) throws UnknownHostException {
         final var context = new Context(Locale.ENGLISH);
         context.setVariable("name", name);
-        context.setVariable("url", this.createUrl(userToken.getToken()));
+        context.setVariable("url", this.createCreatePasswordUrl(userToken.getToken()));
 
         return context;
     }
 
-    private String createUrl(String token) throws UnknownHostException {
+    private String createCreatePasswordUrl(String token) throws UnknownHostException {
         return "http://%s:%s/?#/security/create-password/token=%s"
                 .formatted(
                         InetAddress.getLocalHost().getHostAddress(),

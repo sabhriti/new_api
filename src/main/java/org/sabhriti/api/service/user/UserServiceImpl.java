@@ -4,7 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.sabhriti.api.dal.model.user.User;
 import org.sabhriti.api.dal.repository.UserRepository;
 import org.sabhriti.api.service.exception.AlreadyExistsException;
-import org.sabhriti.api.transport.email.UserRegistrationMailSender;
+import org.sabhriti.api.service.email.PasswordCreationEmailService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -17,7 +18,9 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
-    private final UserRegistrationMailSender userRegistrationMailSender;
+    private final PasswordCreationEmailService passwordCreationEmailService;
+
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @Override
     public Flux<User> getAll() {
@@ -43,10 +46,17 @@ public class UserServiceImpl implements UserService {
                 .switchIfEmpty(this.createUser(user));
     }
 
+    public Mono<User> updatePassword(String password, User user) {
+        user.setPassword(this.passwordEncoder.encode(password));
+        user.setIsInitialPassword(false);
+
+        return this.userRepository.save(user);
+    }
+
     private Mono<User> createUser(User user) {
         return this.userRepository
                 .save(user)
-                .flatMap(this.userRegistrationMailSender::sendPasswordCreationEmail);
+                .flatMap(this.passwordCreationEmailService::sendMail);
     }
 
     private Mono<Object> createError(String field) {
@@ -61,6 +71,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public Mono<User> findByUsername(String username) {
         return this.userRepository.findUserByUsername(username);
+    }
+
+    @Override
+    public Mono<User> findByEmail(String email) {
+        return this.userRepository.findUserByEmail(email);
     }
 
     @Override
