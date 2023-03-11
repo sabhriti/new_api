@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.sabhriti.api.dal.model.user.User;
 import org.sabhriti.api.dal.model.user.UserToken;
 import org.sabhriti.api.dal.model.user.UserTokenUsage;
-import org.sabhriti.api.service.exception.FailedSendingMailException;
+import org.sabhriti.api.exception.FailedSendingMailException;
 import org.sabhriti.api.service.user.token.UserTokenService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;

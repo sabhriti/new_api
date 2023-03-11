@@ -17,7 +17,7 @@ import java.util.function.Function;
 import static org.sabhriti.api.service.security.AuthenticationManager.AUTHORITIES_KEY;
 
 @Component
-public class TokenProvider implements Serializable {
+public class JwtTokenProvider implements Serializable {
 
     @Value("${security.jwt.token.secret-key}")
     private String secretKey;

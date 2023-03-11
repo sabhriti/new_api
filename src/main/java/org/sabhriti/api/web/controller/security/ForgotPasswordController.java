@@ -5,7 +5,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.sabhriti.api.dal.model.user.User;
 import org.sabhriti.api.dal.model.user.UserTokenUsage;
 import org.sabhriti.api.service.email.PasswordResetEmailService;
-import org.sabhriti.api.service.exception.NotFoundException;
+import org.sabhriti.api.exception.NotFoundException;
 import org.sabhriti.api.service.user.UserService;
 import org.sabhriti.api.service.user.token.UserTokenService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,6 +30,7 @@ public class ForgotPasswordController {
     public Mono<User> handlePasswordForget(@PathVariable String email) {
         return this.userService
                 .findByEmail(email)
+                .map(user -> user)
                 .flatMap(this::createToken)
                 .switchIfEmpty(Mono.error(new NotFoundException("User for provided email not found.")));
     }

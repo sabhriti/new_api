@@ -1,4 +1,4 @@
-package org.sabhriti.api.web.config;
+package org.sabhriti.api.config;
 
 import lombok.RequiredArgsConstructor;
 import org.sabhriti.api.service.security.AuthenticationManager;

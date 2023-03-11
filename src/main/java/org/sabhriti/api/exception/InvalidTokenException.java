@@ -1,4 +1,4 @@
-package org.sabhriti.api.service.exception;
+package org.sabhriti.api.exception;
 
 public class InvalidTokenException extends Exception{
     public InvalidTokenException(String message) {

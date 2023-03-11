@@ -23,5 +23,15 @@ services:
     networks:
       - dsl
 
+  mailhog:
+    image: mailhog/mailhog
+    logging:
+      driver: 'none'
+    ports:
+      - 1025:1025
+      - 8025:8025
+    networks:
+      - dsl
+
 networks:
   dsl:

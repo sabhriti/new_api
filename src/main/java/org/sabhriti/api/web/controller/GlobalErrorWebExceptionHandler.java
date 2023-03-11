@@ -1,10 +1,10 @@
-package org.sabhriti.api.web.error;
+package org.sabhriti.api.web.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.sabhriti.api.service.exception.AlreadyExistsException;
-import org.sabhriti.api.service.exception.BadPasswordException;
-import org.sabhriti.api.service.exception.InvalidTokenException;
-import org.sabhriti.api.service.exception.NotFoundException;
+import org.sabhriti.api.exception.AlreadyExistsException;
+import org.sabhriti.api.exception.BadPasswordException;
+import org.sabhriti.api.exception.InvalidTokenException;
+import org.sabhriti.api.exception.NotFoundException;
 import org.sabhriti.api.web.dto.ErrorResponse;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.autoconfigure.web.reactive.error.AbstractErrorWebExceptionHandler;
@@ -19,7 +19,6 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.*;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
 import java.util.Map;
 
 @Slf4j

@@ -2,10 +2,9 @@ package org.sabhriti.api.service.email;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.sabhriti.api.dal.model.user.User;
 import org.sabhriti.api.dal.model.user.UserToken;
-import org.sabhriti.api.service.exception.FailedSendingMailException;
+import org.sabhriti.api.exception.FailedSendingMailException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;

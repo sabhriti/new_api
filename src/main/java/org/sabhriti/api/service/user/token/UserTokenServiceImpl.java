@@ -18,6 +18,7 @@ public class UserTokenServiceImpl implements UserTokenService {
 
     @Override
     public Mono<UserToken> createFor(User user, String reason, LocalDateTime expiresOn) {
+
         var userToken = new UserToken();
         userToken.setCreatedAt(LocalDateTime.now());
         userToken.setUserId(user.getId());
@@ -26,7 +27,18 @@ public class UserTokenServiceImpl implements UserTokenService {
         userToken.setToken(UUID.randomUUID().toString());
         userToken.setIsUsed(false);
 
-        return this.userTokenRepository.save(userToken);
+        return this.userTokenRepository
+                .existsUserTokenByUserId(user.getId())
+                .flatMap(aBoolean -> {
+                    if (aBoolean) {
+                        return this.userTokenRepository
+                                .findUserTokenByUserId(user.getId())
+                                .map(t -> this.userTokenRepository.deleteById(t.getId()))
+                                .then(this.userTokenRepository.save(userToken));
+                    } else {
+                        return this.userTokenRepository.save(userToken);
+                    }
+                });
     }
 
     public Mono<UserToken> findByToken(String token) {

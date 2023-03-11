@@ -21,7 +21,7 @@ public class AuthenticationManager implements ReactiveAuthenticationManager {
 
     public static final String AUTHORITIES_KEY = "ROLES";
 
-    private final TokenProvider tokenProvider;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Override
     @SuppressWarnings("unchecked")
@@ -29,13 +29,13 @@ public class AuthenticationManager implements ReactiveAuthenticationManager {
         String authToken = authentication.getCredentials().toString();
         String username;
         try {
-            username = tokenProvider.getUsernameFromToken(authToken);
+            username = jwtTokenProvider.getUsernameFromToken(authToken);
         } catch (Exception e) {
             log.error(e.getMessage());
             username = null;
         }
-        if (username != null && !tokenProvider.isTokenExpired(authToken)) {
-            Claims claims = tokenProvider.getAllClaimsFromToken(authToken);
+        if (username != null && !jwtTokenProvider.isTokenExpired(authToken)) {
+            Claims claims = jwtTokenProvider.getAllClaimsFromToken(authToken);
             List<String> roles = claims.get(AUTHORITIES_KEY, List.class);
             List<SimpleGrantedAuthority> authorities = roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
             UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(username, username, authorities);

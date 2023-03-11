@@ -3,14 +3,12 @@ package org.sabhriti.api.service.user;
 import lombok.RequiredArgsConstructor;
 import org.sabhriti.api.dal.model.user.User;
 import org.sabhriti.api.dal.repository.UserRepository;
-import org.sabhriti.api.service.exception.AlreadyExistsException;
+import org.sabhriti.api.exception.AlreadyExistsException;
 import org.sabhriti.api.service.email.PasswordCreationEmailService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -29,21 +27,24 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Mono<Object> save(User user) {
+
         return this.userRepository
-                .findUserByEmail(user.getEmail())
-                .zipWith(this.userRepository.findUserByUsername(user.getUsername()))
-                .flatMap(zipped -> {
-                    if (!Objects.equals(zipped.getT1().getId(), user.getId())) {
-                        return this.createError("email");
+                .existsByEmailOrUsername(user.getEmail(), user.getUsername())
+                .flatMap(userAlreadyExists -> {
+                    if (userAlreadyExists) {
+                        return this.userRepository
+                                .existsByEmail(user.getEmail())
+                                .flatMap(userWithSameEmailExists -> {
+                                    if (userWithSameEmailExists) {
+                                        return this.createError("email");
+                                    } else {
+                                        return this.createError("username");
+                                    }
+                                });
+                    } else {
+                        return this.createUser(user);
                     }
-
-                    if (!Objects.equals(zipped.getT2().getId(), user.getId())) {
-                        return this.createError("username");
-                    }
-
-                    return this.createUser(user);
-                })
-                .switchIfEmpty(this.createUser(user));
+                });
     }
 
     public Mono<User> updatePassword(String password, User user) {

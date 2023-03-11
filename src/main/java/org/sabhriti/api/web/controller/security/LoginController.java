@@ -2,7 +2,7 @@ package org.sabhriti.api.web.controller.security;
 
 import lombok.RequiredArgsConstructor;
 import org.sabhriti.api.dal.model.user.User;
-import org.sabhriti.api.service.security.TokenProvider;
+import org.sabhriti.api.service.security.JwtTokenProvider;
 import org.sabhriti.api.service.user.UserService;
 import org.sabhriti.api.web.dto.LoginRequest;
 import org.springframework.http.HttpStatus;
@@ -21,7 +21,7 @@ public class LoginController {
 
     private final UserService userService;
 
-    private final TokenProvider tokenProvider;
+    private final JwtTokenProvider jwtTokenProvider;
 
     private final BCryptPasswordEncoder passwordEncoder;
 
@@ -47,7 +47,7 @@ public class LoginController {
 
 
     private Mono<ResponseEntity<String>> createTokenResponse(User user) {
-        return Mono.just(new ResponseEntity<>(this.tokenProvider.generateToken(user), HttpStatus.OK));
+        return Mono.just(new ResponseEntity<>(this.jwtTokenProvider.generateToken(user), HttpStatus.OK));
     }
 
     private Mono<ResponseEntity<String>> createResponseForBadRequest(String message) {

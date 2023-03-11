@@ -1,4 +1,4 @@
-package org.sabhriti.api.web.config;
+package org.sabhriti.api.config;
 
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

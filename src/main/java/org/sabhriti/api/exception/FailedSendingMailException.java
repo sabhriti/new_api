@@ -1,4 +1,4 @@
-package org.sabhriti.api.service.exception;
+package org.sabhriti.api.exception;
 
 public class FailedSendingMailException extends Exception {
     public FailedSendingMailException(String message) {

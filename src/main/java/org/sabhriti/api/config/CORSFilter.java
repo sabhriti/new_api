@@ -1,4 +1,4 @@
-package org.sabhriti.api.web.config;
+package org.sabhriti.api.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
