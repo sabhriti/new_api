@@ -35,6 +35,13 @@ public class SecurityConfig {
                 .pathMatchers("/security/create-password/**").permitAll()
                 .pathMatchers("/security/forget-password/**").permitAll()
                 .pathMatchers("/user-token/validate/**").permitAll()
+                .pathMatchers(
+                        "/v2/api-docs",
+                        "/swagger-ui**",
+                        "/swagger-resources/**",
+                        "/*/swagger-resources/**",
+                        "/*/v2/api-docs"
+                ).permitAll()
                 .pathMatchers(HttpMethod.OPTIONS).permitAll()
                 .anyExchange().authenticated()
                 .and()
