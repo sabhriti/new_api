@@ -33,8 +33,8 @@ public class UserTokenServiceImpl implements UserTokenService {
                     if (aBoolean) {
                         return this.userTokenRepository
                                 .findUserTokenByUserId(user.getId())
-                                .map(t -> this.userTokenRepository.deleteById(t.getId()))
-                                .then(this.userTokenRepository.save(userToken));
+                                .doOnNext(t -> this.userTokenRepository.deleteById(t.getId()))
+                                .switchIfEmpty(this.userTokenRepository.save(userToken));
                     } else {
                         return this.userTokenRepository.save(userToken);
                     }

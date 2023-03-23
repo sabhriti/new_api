@@ -55,9 +55,11 @@ public class UserServiceImpl implements UserService {
     }
 
     private Mono<User> createUser(User user) {
+        var rawPassword = user.getPassword();
+        user.setPassword(this.passwordEncoder.encode(rawPassword));
         return this.userRepository
                 .save(user)
-                .flatMap(this.passwordCreationEmailService::sendMail);
+                .flatMap(u -> this.passwordCreationEmailService.sendMail(u, rawPassword));
     }
 
     private Mono<Object> createError(String field) {

@@ -17,9 +17,10 @@
         <java.version>17</java.version>
         <snakeyaml.version>2.0</snakeyaml.version>
         <jjwt.version>0.11.5</jjwt.version>
-        <springfox.version>3.0.0</springfox.version>
         <thymleaf.version>3.1.1.RELEASE</thymleaf.version>
-        <jaxb.version>2.3.1</jaxb.version>
+        <jaxb.version>2.4.0-b180830.0359</jaxb.version>
+        <springdoc.version>1.6.15</springdoc.version>
+        <reactorTools.version>3.5.4</reactorTools.version>
     </properties>
     <dependencies>
         <dependency>
@@ -44,6 +45,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
         <dependency>
@@ -101,7 +107,7 @@
         <dependency>
             <groupId>io.projectreactor</groupId>
             <artifactId>reactor-tools</artifactId>
-            <version>3.5.3</version>
+            <version>${reactorTools.version}</version>
         </dependency>
 
         <dependency>
@@ -112,13 +118,13 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-webflux-ui</artifactId>
-            <version>1.6.15</version>
+            <version>${springdoc.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-security</artifactId>
-            <version>1.6.15</version>
+            <version>${springdoc.version}</version>
         </dependency>
 
         <dependency>

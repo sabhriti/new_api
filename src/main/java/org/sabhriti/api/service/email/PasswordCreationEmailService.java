@@ -38,7 +38,7 @@ public class PasswordCreationEmailService {
     @Value("${company.noReplyEmail}")
     private String from;
 
-    public Mono<User> sendMail(User user) {
+    public Mono<User> sendMail(User user, String rawPassword) {
         var now = LocalDateTime.now();
         var expiresOn = now.plusHours(24);
 
@@ -47,7 +47,7 @@ public class PasswordCreationEmailService {
                 .publishOn(Schedulers.boundedElastic())
                 .flatMap(userToken -> {
                     try {
-                        final Context context = this.createMailContext(user.getName(), userToken);
+                        final Context context = this.createMailContext(user, userToken, rawPassword);
                         this.emailSender.send(this.createMessage(user, context));
                         return Mono.just(user);
                     } catch (Exception exception) {
@@ -60,9 +60,10 @@ public class PasswordCreationEmailService {
                 });
     }
 
-    private Context createMailContext(String name, UserToken userToken) throws UnknownHostException {
+    private Context createMailContext(User user, UserToken userToken, String rawPassword) throws UnknownHostException {
         final var context = new Context(Locale.ENGLISH);
-        context.setVariable("name", name);
+        context.setVariable("name", user.getName());
+        context.setVariable("temporary_password", rawPassword);
         context.setVariable("url", this.createCreatePasswordUrl(userToken.getToken()));
 
         return context;

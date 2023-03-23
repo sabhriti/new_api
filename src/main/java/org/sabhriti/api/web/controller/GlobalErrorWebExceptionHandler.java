@@ -56,7 +56,7 @@ public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHan
             return this.createResponse(HttpStatus.BAD_REQUEST, error);
         }
 
-        if (error instanceof NotFoundException  || error instanceof InvalidTokenException) {
+        if (error instanceof NotFoundException || error instanceof InvalidTokenException) {
             return this.createResponse(HttpStatus.NOT_FOUND, error);
         }
 
@@ -67,15 +67,10 @@ public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHan
         return this.createResponse(HttpStatus.INTERNAL_SERVER_ERROR, error);
     }
 
-    private  Mono<ServerResponse> createResponse(HttpStatus httpStatus, Throwable error) {
+    private Mono<ServerResponse> createResponse(HttpStatus httpStatus, Throwable error) {
         return ServerResponse
                 .status(httpStatus)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromValue(ErrorResponse
-                        .builder()
-                        .code(httpStatus.value())
-                        .message(error.getMessage())
-                        .build())
-                );
+                .body(BodyInserters.fromValue(new ErrorResponse(httpStatus.value(), error.getMessage())));
     }
 }

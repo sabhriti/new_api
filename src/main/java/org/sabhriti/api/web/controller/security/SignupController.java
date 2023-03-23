@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.sabhriti.api.dal.model.user.User;
 import org.sabhriti.api.dal.model.user.UserActivationStatus;
 import org.sabhriti.api.dal.model.user.UserRoles;
+import org.sabhriti.api.service.security.RandomPasswordGenerator;
 import org.sabhriti.api.service.user.UserService;
 import org.sabhriti.api.web.dto.SignupRequest;
 import org.springframework.http.HttpStatus;
@@ -30,7 +31,7 @@ public class SignupController {
     Mono<ResponseEntity<String>> signUp(@RequestBody SignupRequest signupRequest) {
         var userToStore = new User();
         userToStore.setName(signupRequest.name());
-        userToStore.setPassword(this.passwordEncoder.encode(signupRequest.password()));
+        userToStore.setPassword(RandomPasswordGenerator.generate());
         userToStore.setUsername(signupRequest.username());
         userToStore.setEmail(signupRequest.email());
         userToStore.setRoles(List.of(UserRoles.USER));
