@@ -35,8 +35,11 @@ public class PasswordCreationEmailService {
 
     private final JavaMailSender emailSender;
 
-    @Value("${company.noReplyEmail}")
+    @Value("${company.emails.noReplyAddress}")
     private String from;
+
+    @Value("${company.emails.callbackUrl}")
+    private String callbackUrl;
 
     public Mono<User> sendMail(User user, String rawPassword) {
         var now = LocalDateTime.now();
@@ -70,12 +73,8 @@ public class PasswordCreationEmailService {
     }
 
     private String createCreatePasswordUrl(String token) throws UnknownHostException {
-        return "http://%s:%s/?#/security/create-password/token=%s"
-                .formatted(
-                        InetAddress.getLocalHost().getHostAddress(),
-                        8080,
-                        token
-                );
+        return "%s/security/create-password/token=%s"
+                .formatted(this.callbackUrl, token);
     }
 
     private SimpleMailMessage createMessage(User user, Context context) throws Exception {

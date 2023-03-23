@@ -32,7 +32,7 @@ public class PasswordResetEmailService {
     @Value("${company.name}")
     private String company;
 
-    @Value("${company.noReplyEmail}")
+    @Value("${company.emails.noReplyAddress}")
     private String noReplyEmail;
 
     public Mono<User> sendMail(User user, UserToken userToken, String newPassword) {
