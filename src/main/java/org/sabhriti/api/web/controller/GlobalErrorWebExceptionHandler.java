@@ -52,25 +52,29 @@ public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHan
 
         log.error("An error has been occurred", error);
 
-        if (error instanceof AlreadyExistsException || error instanceof BadPasswordException) {
-            return this.createResponse(HttpStatus.BAD_REQUEST, error);
-        }
 
-        if (error instanceof NotFoundException || error instanceof InvalidTokenException) {
-            return this.createResponse(HttpStatus.NOT_FOUND, error);
-        }
+        return switch (getError(request)) {
 
-        if (error instanceof Exception exception) {
-            return this.createResponse(exceptionToStatusCode.getOrDefault(exception.getClass(), defaultStatus), error);
-        }
+            case AlreadyExistsException alreadyExistsException ->
+                    this.createResponse(HttpStatus.BAD_REQUEST, alreadyExistsException);
+            case BadPasswordException badPasswordException ->
+                    this.createResponse(HttpStatus.BAD_REQUEST, badPasswordException);
+            case InvalidTokenException invalidTokenException ->
+                    this.createResponse(HttpStatus.BAD_REQUEST, invalidTokenException);
 
-        return this.createResponse(HttpStatus.INTERNAL_SERVER_ERROR, error);
+            case NotFoundException notFoundException -> this.createResponse(HttpStatus.NOT_FOUND, notFoundException);
+
+            case Exception exception ->
+                    this.createResponse(exceptionToStatusCode.getOrDefault(error.getClass(), defaultStatus), exception);
+
+            default -> this.createResponse(HttpStatus.INTERNAL_SERVER_ERROR, error);
+        };
     }
 
     private Mono<ServerResponse> createResponse(HttpStatus httpStatus, Throwable error) {
         return ServerResponse
                 .status(httpStatus)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromValue(new ErrorResponse(httpStatus.value(), error.getMessage())));
+                .body(BodyInserters.fromValue(new ErrorResponse(error.getMessage())));
     }
 }

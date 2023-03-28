@@ -30,12 +30,12 @@ public class PasswordCreationController {
     private final BCryptPasswordEncoder passwordEncoder;
 
     @PostMapping("/create-password")
-    Mono<User> createPassword(@RequestBody CreatePasswordRequest signupRequest) {
+    Mono<User> createPassword(@RequestBody CreatePasswordRequest createPasswordRequest) {
         return this.userTokenService
-                .findByToken(signupRequest.token())
+                .findByToken(createPasswordRequest.token())
                 .flatMap(userToken -> {
                     if (!userToken.getIsUsed() && userToken.getExpiresOn().isAfter(LocalDateTime.now())) {
-                        return this.checkForUserAndUpdatePassword(signupRequest, userToken);
+                        return this.checkForUserAndUpdatePassword(createPasswordRequest, userToken);
                     } else {
                         return Mono.error(new InvalidTokenException("The token has been already used."));
                     }
@@ -44,12 +44,21 @@ public class PasswordCreationController {
     }
 
     private Mono<User> checkForUserAndUpdatePassword(CreatePasswordRequest signupRequest, UserToken userToken) {
-        return this.userService
-                .findOneById(userToken.getUserId())
-                .flatMap(user -> this.doUpdatePassword(signupRequest, user))
-                .switchIfEmpty(
-                        this.createNotFoundError("User associated with the token not found.")
-                );
+        userToken.setIsUsed(true);
+        return this.userTokenService
+                .save(userToken)
+                .flatMap(userToken1 -> this.userService
+                        .findOneById(userToken.getUserId())
+                        .flatMap(user -> {
+                            if (this.passwordEncoder.encode(signupRequest.password()).equals(user.getPassword())) {
+                                return this.doUpdatePassword(signupRequest, user);
+                            } else {
+                                return Mono.error(new BadPasswordException("The old password is not correct."));
+                            }
+                        })
+                        .switchIfEmpty(
+                                this.createNotFoundError("User associated with the token not found.")
+                        ));
     }
 
     private Mono<User> doUpdatePassword(CreatePasswordRequest signupRequest, User user) {

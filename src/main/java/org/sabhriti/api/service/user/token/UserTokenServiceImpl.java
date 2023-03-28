@@ -44,4 +44,9 @@ public class UserTokenServiceImpl implements UserTokenService {
     public Mono<UserToken> findByToken(String token) {
         return this.userTokenRepository.findUserTokenByToken(token);
     }
+
+    @Override
+    public Mono<UserToken> save(UserToken userToken) {
+        return this.userTokenRepository.save(userToken);
+    }
 }
