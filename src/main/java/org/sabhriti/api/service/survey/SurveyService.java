@@ -1,15 +1,30 @@
 package org.sabhriti.api.service.survey;
 
+import lombok.RequiredArgsConstructor;
 import org.sabhriti.api.dal.model.Survey;
+import org.sabhriti.api.dal.repository.SurveyRepository;
+import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-public interface SurveyService {
-    Flux<Survey> getAll();
+@RequiredArgsConstructor
+@Service
+public class SurveyService {
+    private final SurveyRepository surveyRepository;
 
-    Mono<Survey> addNew(Survey question);
+    public Flux<Survey> getAll() {
+        return this.surveyRepository.findAll();
+    }
 
-    Mono<Survey> findOneById(String questionId);
+    public Mono<Survey> addNew(Survey survey) {
+        return this.surveyRepository.save(survey);
+    }
 
-    Mono<Void> deleteById(String questionId);
+    public Mono<Survey> findOneById(String surveyId) {
+        return this.surveyRepository.findById(surveyId);
+    }
+
+    public Mono<Void> deleteById(String surveyId) {
+        return this.surveyRepository.deleteById(surveyId);
+    }
 }

@@ -21,9 +21,14 @@ public class UserTokenController {
         return this.userTokenService
                 .findByToken(token)
                 .map(userToken -> {
-                    if (null != userToken.getIsUsed() && userToken.getExpiresOn().isBefore(LocalDateTime.now())) {
+                    if (userToken.getExpiresOn().isBefore(LocalDateTime.now())) {
+                        return false;
+                    }
+
+                    if (null != userToken.getIsUsed()) {
                         return !userToken.getIsUsed();
                     }
+
                     return true;
                 })
                 .switchIfEmpty(Mono.just(false));

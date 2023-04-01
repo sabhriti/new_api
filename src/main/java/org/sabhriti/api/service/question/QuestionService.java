@@ -1,15 +1,31 @@
 package org.sabhriti.api.service.question;
 
+import lombok.RequiredArgsConstructor;
 import org.sabhriti.api.dal.model.Question;
+import org.sabhriti.api.dal.repository.QuestionRepository;
+import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-public interface QuestionService {
-    Flux<Question> getAll();
+@Service
+@RequiredArgsConstructor
+public class QuestionService {
 
-    Mono<Question> addNew(Question question);
+    private final QuestionRepository questionRepository;
 
-    Mono<Question> findOneById(String questionId);
+    public Flux<Question> getAll() {
+        return this.questionRepository.findAll();
+    }
 
-    Mono<Void> deleteById(String questionId);
+    public Mono<Question> addNew(Question question) {
+        return this.questionRepository.save(question);
+    }
+
+    public Mono<Question> findOneById(String questionId) {
+        return this.questionRepository.findById(questionId);
+    }
+
+    public Mono<Void> deleteById(String questionId) {
+        return this.questionRepository.deleteById(questionId);
+    }
 }

@@ -44,25 +44,24 @@ public class PasswordCreationController {
     }
 
     private Mono<User> checkForUserAndUpdatePassword(CreatePasswordRequest signupRequest, UserToken userToken) {
-        userToken.setIsUsed(true);
-        return this.userTokenService
-                .save(userToken)
-                .flatMap(userToken1 -> this.userService
-                        .findOneById(userToken.getUserId())
-                        .flatMap(user -> {
-                            if (this.passwordEncoder.encode(signupRequest.password()).equals(user.getPassword())) {
-                                return this.doUpdatePassword(signupRequest, user);
-                            } else {
-                                return Mono.error(new BadPasswordException("The old password is not correct."));
-                            }
-                        })
-                        .switchIfEmpty(
-                                this.createNotFoundError("User associated with the token not found.")
-                        ));
+        return this.userService
+                .findOneById(userToken.getUserId())
+                .flatMap(user -> {
+                    var passwordsMatch = this.passwordEncoder.matches(signupRequest.password(), user.getPassword());
+                    if (passwordsMatch) {
+                        userToken.setIsUsed(true);
+                        userToken.setUsedAt(LocalDateTime.now());
+                        return this.userTokenService
+                                .save(userToken)
+                                .flatMap(userToken1 -> this.doUpdatePassword(signupRequest, user));
+                    } else {
+                        return Mono.error(new BadPasswordException("The old password is not correct."));
+                    }
+                }).switchIfEmpty(this.createNotFoundError("User associated with the token not found."));
     }
 
     private Mono<User> doUpdatePassword(CreatePasswordRequest signupRequest, User user) {
-        if (this.passwordEncoder.encode(signupRequest.password()).equals(user.getPassword())) {
+        if (this.passwordEncoder.matches(signupRequest.password(), user.getPassword())) {
             return Mono.error(new BadPasswordException("New password and the old password cannot be same."));
         } else {
             return this.userService.updatePassword(signupRequest.password(), user);

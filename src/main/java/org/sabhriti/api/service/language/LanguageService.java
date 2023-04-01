@@ -1,16 +1,30 @@
 package org.sabhriti.api.service.language;
 
-import org.sabhriti.api.dal.model.Factory;
+import lombok.RequiredArgsConstructor;
 import org.sabhriti.api.dal.model.Language;
+import org.sabhriti.api.dal.repository.LanguageRepository;
+import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-public interface LanguageService {
-    Flux<Language> getAll();
+@RequiredArgsConstructor
+@Service
+public class LanguageService {
+    private final LanguageRepository languageRepository;
 
-    Mono<Language> addNew(Language language);
+    public Flux<Language> getAll() {
+        return this.languageRepository.findAll();
+    }
 
-    Mono<Language> findOneById(String languageId);
+    public Mono<Language> addNew(Language language) {
+        return this.languageRepository.save(language);
+    }
 
-    Mono<Void> deleteById(String languageId);
+    public Mono<Language> findOneById(String languageId) {
+        return this.languageRepository.findById(languageId);
+    }
+
+    public Mono<Void> deleteById(String languageId) {
+        return this.languageRepository.deleteById(languageId);
+    }
 }
