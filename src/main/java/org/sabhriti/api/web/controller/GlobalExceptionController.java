@@ -1,10 +1,7 @@
 package org.sabhriti.api.web.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.sabhriti.api.exception.AlreadyExistsException;
-import org.sabhriti.api.exception.BadPasswordException;
-import org.sabhriti.api.exception.InvalidTokenException;
-import org.sabhriti.api.exception.NotFoundException;
+import org.sabhriti.api.exception.*;
 import org.sabhriti.api.web.dto.ErrorResponse;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.autoconfigure.web.reactive.error.AbstractErrorWebExceptionHandler;
@@ -24,16 +21,16 @@ import java.util.Map;
 @Slf4j
 @Order(-2)
 @Component
-public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHandler {
+public class GlobalExceptionController extends AbstractErrorWebExceptionHandler {
 
     private final Map<Class<? extends Exception>, HttpStatus> exceptionToStatusCode;
     private final HttpStatus defaultStatus;
 
-    public GlobalErrorWebExceptionHandler(ErrorAttributes errorAttributes,
-                                          ApplicationContext applicationContext,
-                                          ServerCodecConfigurer serverCodecConfigurer,
-                                          Map<Class<? extends Exception>, HttpStatus> exceptionToStatusCode,
-                                          HttpStatus defaultStatus
+    public GlobalExceptionController(ErrorAttributes errorAttributes,
+                                     ApplicationContext applicationContext,
+                                     ServerCodecConfigurer serverCodecConfigurer,
+                                     Map<Class<? extends Exception>, HttpStatus> exceptionToStatusCode,
+                                     HttpStatus defaultStatus
     ) {
         super(errorAttributes, new WebProperties.Resources(), applicationContext);
         super.setMessageWriters(serverCodecConfigurer.getWriters());
@@ -61,6 +58,8 @@ public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHan
                     this.createResponse(HttpStatus.BAD_REQUEST, badPasswordException);
             case InvalidTokenException invalidTokenException ->
                     this.createResponse(HttpStatus.BAD_REQUEST, invalidTokenException);
+            case InvalidCredentialsException invalidCredentialsException ->
+                    this.createResponse(HttpStatus.BAD_REQUEST, invalidCredentialsException);
 
             case NotFoundException notFoundException -> this.createResponse(HttpStatus.NOT_FOUND, notFoundException);
 
