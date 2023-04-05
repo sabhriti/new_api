@@ -47,7 +47,7 @@ public class PasswordCreationController {
         return this.userService
                 .findOneById(userToken.getUserId())
                 .flatMap(user -> {
-                    var passwordsMatch = this.passwordEncoder.matches(signupRequest.password(), user.getPassword());
+                    var passwordsMatch = this.passwordEncoder.matches(signupRequest.oldPassword(), user.getPassword());
                     if (passwordsMatch) {
                         userToken.setIsUsed(true);
                         userToken.setUsedAt(LocalDateTime.now());

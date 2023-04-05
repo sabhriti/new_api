@@ -26,16 +26,14 @@ public class LoginController {
     private final BCryptPasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
-    public Mono<Object> login(@RequestBody LoginRequest loginRequest) {
-
+    public Mono<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
         return this.userService
                 .findByUsername(loginRequest.username())
-                .map(user -> {
-
+                .flatMap(user -> {
                     if (this.passwordMatches(loginRequest, user)) {
-                        return new LoginResponse(this.jwtTokenProvider.generateToken(user));
+                        return Mono.just(new LoginResponse(this.jwtTokenProvider.generateToken(user)));
                     } else {
-                        return new InvalidCredentialsException("invalid password");
+                        return Mono.error(new InvalidCredentialsException("invalid password"));
                     }
 
                 })

@@ -24,7 +24,7 @@ public class UserService {
         return this.userRepository.findAll();
     }
 
-    public Mono<Object> save(User user) {
+    public Mono<Object> createNew(User user) {
 
         return this.userRepository
                 .existsByEmailOrUsername(user.getEmail(), user.getUsername())

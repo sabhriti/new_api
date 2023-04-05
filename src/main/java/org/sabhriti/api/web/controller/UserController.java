@@ -21,7 +21,7 @@ public class UserController {
 
     @PostMapping
     public Mono<Object> save(@RequestBody User user) {
-        return this.userService.save(user);
+        return this.userService.createNew(user);
     }
 
     @GetMapping("/id={userId}")

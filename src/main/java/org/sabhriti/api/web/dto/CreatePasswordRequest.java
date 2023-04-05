@@ -1,3 +1,3 @@
 package org.sabhriti.api.web.dto;
 
-public record CreatePasswordRequest (String password, String token){}
+public record CreatePasswordRequest (String oldPassword, String password, String token){}

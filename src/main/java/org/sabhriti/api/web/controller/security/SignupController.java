@@ -9,7 +9,6 @@ import org.sabhriti.api.service.user.UserService;
 import org.sabhriti.api.web.dto.SignupRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,8 +24,6 @@ public class SignupController {
 
     private final UserService userService;
 
-    private final BCryptPasswordEncoder passwordEncoder;
-
     @PostMapping("/signup")
     Mono<ResponseEntity<String>> signUp(@RequestBody SignupRequest signupRequest) {
         var userToStore = new User();
@@ -38,7 +35,7 @@ public class SignupController {
         userToStore.setActivationStatus(UserActivationStatus.NEW);
 
         return this.userService
-                .save(userToStore)
+                .createNew(userToStore)
                 .flatMap(o -> this.createUserCreatedResponse());
     }
 
