@@ -6,11 +6,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
 @Data
-public class Factory {
+public class BusinessUnit {
     @Id
     private String id;
 
     private String name;
 
-    private FactoryLocation location;
+    private Address location;
 }

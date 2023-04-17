@@ -3,7 +3,7 @@ package org.sabhriti.api.dal.model;
 import lombok.Data;
 
 @Data
-public class FactoryLocation {
+public class Address {
 
     private String street;
 
