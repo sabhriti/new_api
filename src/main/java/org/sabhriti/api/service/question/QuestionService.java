@@ -1,8 +1,8 @@
 package org.sabhriti.api.service.question;
 
 import lombok.RequiredArgsConstructor;
-import org.sabhriti.api.dal.model.Question;
-import org.sabhriti.api.dal.repository.QuestionRepository;
+import org.sabhriti.api.dal.model.question.Question;
+import org.sabhriti.api.dal.repository.question.QuestionRepository;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;

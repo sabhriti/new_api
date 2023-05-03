@@ -1,6 +1,8 @@
-package org.sabhriti.api.dal.model;
+package org.sabhriti.api.dal.model.question;
 
 import lombok.Data;
+import org.sabhriti.api.dal.model.Answer;
+import org.sabhriti.api.dal.model.LocalizedText;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 

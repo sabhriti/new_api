@@ -8,7 +8,7 @@ import org.sabhriti.api.exception.InvalidTokenException;
 import org.sabhriti.api.exception.NotFoundException;
 import org.sabhriti.api.service.user.UserService;
 import org.sabhriti.api.service.user.token.UserTokenService;
-import org.sabhriti.api.web.dto.CreatePasswordRequest;
+import org.sabhriti.api.web.dto.security.CreatePasswordRequest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

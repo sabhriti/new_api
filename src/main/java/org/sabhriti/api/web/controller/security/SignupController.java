@@ -6,7 +6,7 @@ import org.sabhriti.api.dal.model.user.UserActivationStatus;
 import org.sabhriti.api.dal.model.user.UserRoles;
 import org.sabhriti.api.service.security.RandomPasswordGenerator;
 import org.sabhriti.api.service.user.UserService;
-import org.sabhriti.api.web.dto.SignupRequest;
+import org.sabhriti.api.web.dto.security.SignupRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

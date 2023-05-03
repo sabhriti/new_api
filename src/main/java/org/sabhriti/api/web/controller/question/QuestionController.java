@@ -1,7 +1,7 @@
-package org.sabhriti.api.web.controller;
+package org.sabhriti.api.web.controller.question;
 
 import lombok.RequiredArgsConstructor;
-import org.sabhriti.api.dal.model.Question;
+import org.sabhriti.api.dal.model.question.Question;
 import org.sabhriti.api.service.question.QuestionService;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
