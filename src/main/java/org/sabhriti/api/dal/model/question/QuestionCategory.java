@@ -1,23 +1,22 @@
 package org.sabhriti.api.dal.model.question;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import org.sabhriti.api.dal.model.LocalizedText;
-import org.springframework.data.annotation.Id;
+import lombok.NoArgsConstructor;
+import nonapi.io.github.classgraph.json.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.List;
-
-@Data
 @Document
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class QuestionCategory {
     @Id
     private String id;
 
-    private List<LocalizedText> name;
-
-    private String frameworkId;
+    private String title;
 
     private String description;
-
-    private String remarks;
 }

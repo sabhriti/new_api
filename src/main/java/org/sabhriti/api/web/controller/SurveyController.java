@@ -12,13 +12,13 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class SurveyController {
     private final SurveyService surveyService;
-    
+
     @GetMapping()
     public Flux<Survey> allSurveys() {
         return this.surveyService.getAll();
     }
 
-    @PostMapping("/")
+    @PostMapping()
     public Mono<Survey> addNew(@RequestBody Survey survey) {
         return this.surveyService.addNew(survey);
     }

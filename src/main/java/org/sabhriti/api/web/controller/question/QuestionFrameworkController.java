@@ -14,13 +14,15 @@ public class QuestionFrameworkController {
     private final QuestionFrameworkService questionFrameworkService;
 
     @GetMapping()
-    public Flux<QuestionFramework> allQuestions() {
+    public Flux<QuestionFramework> allFrameworks() {
         return this.questionFrameworkService.getAll();
     }
 
-    @PostMapping("/")
-    public Mono<QuestionFramework> addNew(@RequestBody QuestionFramework question) {
-        return this.questionFrameworkService.addNew(question);
+    @PostMapping()
+    public Mono<QuestionFramework> addNew(@RequestBody QuestionFramework questionFramework) {
+
+
+        return this.questionFrameworkService.save(questionFramework);
     }
 
     @GetMapping("/id={frameworkId}")
