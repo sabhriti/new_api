@@ -47,4 +47,13 @@ public class UserTokenService {
     public Mono<UserToken> save(UserToken userToken) {
         return this.userTokenRepository.save(userToken);
     }
+
+    public Mono<Void> deleteById(String id) {
+        return this.userTokenRepository.deleteById(id);
+    }
+
+
+    public Mono<Void> deleteByUserId(String id) {
+        return this.userTokenRepository.deleteById(id);
+    }
 }

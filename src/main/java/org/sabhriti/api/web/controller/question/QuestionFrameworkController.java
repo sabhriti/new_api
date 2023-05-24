@@ -20,8 +20,6 @@ public class QuestionFrameworkController {
 
     @PostMapping()
     public Mono<QuestionFramework> addNew(@RequestBody QuestionFramework questionFramework) {
-
-
         return this.questionFrameworkService.save(questionFramework);
     }
 

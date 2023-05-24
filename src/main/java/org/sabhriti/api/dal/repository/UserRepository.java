@@ -11,4 +11,5 @@ public interface UserRepository extends ReactiveMongoRepository<User, String> {
     Mono<User> findUserByEmail(String email);
     Mono<Boolean> existsByEmailOrUsername(String email, String username);
     Mono<Boolean> existsByEmail(String email);
+    Mono<Void> deleteUsersByUsernameAndEmail(String username, String email);
 }

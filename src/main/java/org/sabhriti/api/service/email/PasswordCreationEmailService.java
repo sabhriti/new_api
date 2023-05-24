@@ -1,6 +1,7 @@
 package org.sabhriti.api.service.email;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.sabhriti.api.dal.model.user.User;
 import org.sabhriti.api.dal.model.user.UserToken;
 import org.sabhriti.api.dal.model.user.UserTokenUsage;
@@ -14,12 +15,11 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.exceptions.TemplateInputException;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
-import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 import java.util.Locale;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PasswordCreationEmailService {
@@ -40,29 +40,28 @@ public class PasswordCreationEmailService {
     @Value("${company.emails.callbackUrl}")
     private String callbackUrl;
 
-    public Mono<User> sendMail(User user, String rawPassword) {
+    public Mono<Object> sendMail(User user, String rawPassword) {
         var now = LocalDateTime.now();
         var expiresOn = now.plusHours(24);
 
-        return this.userTokenService
+        return this
+                .userTokenService
                 .createFor(user, UserTokenUsage.CREATE_NEW_PASSWORD, expiresOn)
-                .publishOn(Schedulers.boundedElastic())
                 .flatMap(userToken -> {
                     try {
                         final Context context = this.createMailContext(user, userToken, rawPassword);
                         this.emailSender.send(this.createMessage(user, context));
                         return Mono.just(user);
                     } catch (Exception exception) {
-                        return Mono.error(
-                                new FailedSendingMailException(
-                                        "Failed sending password reset mail to provided email address."
-                                )
-                        );
+                        log.error(exception.getMessage());
+                        return this.userTokenService
+                                .deleteById(userToken.getId())
+                                .thenReturn(Mono.error(new FailedSendingMailException()));
                     }
                 });
     }
 
-    private Context createMailContext(User user, UserToken userToken, String rawPassword) throws UnknownHostException {
+    private Context createMailContext(User user, UserToken userToken, String rawPassword) {
         final var context = new Context(Locale.ENGLISH);
         context.setVariable("name", user.getName());
         context.setVariable("temporary_password", rawPassword);
@@ -71,7 +70,7 @@ public class PasswordCreationEmailService {
         return context;
     }
 
-    private String createCreatePasswordUrl(String token) throws UnknownHostException {
+    private String createCreatePasswordUrl(String token) {
         return "%s/security/create-password/token=%s"
                 .formatted(this.callbackUrl, token);
     }

@@ -1,6 +1,7 @@
 package org.sabhriti.api.service.user;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.sabhriti.api.dal.model.user.User;
 import org.sabhriti.api.dal.repository.UserRepository;
 import org.sabhriti.api.exception.AlreadyExistsException;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -52,12 +54,16 @@ public class UserService {
         return this.userRepository.save(user);
     }
 
-    private Mono<User> createUser(User user) {
+    private Mono<Object> createUser(User user) {
         var rawPassword = user.getPassword();
         user.setPassword(this.passwordEncoder.encode(rawPassword));
         return this.userRepository
                 .save(user)
-                .flatMap(u -> this.passwordCreationEmailService.sendMail(u, rawPassword));
+                .flatMap(u ->
+                        this.passwordCreationEmailService
+                                .sendMail(u, rawPassword)
+                                .switchIfEmpty(this.deleteById(user.getId()))
+                );
     }
 
     private Mono<Object> createError(String field) {
@@ -78,5 +84,9 @@ public class UserService {
 
     public Mono<Void> deleteById(String userId) {
         return this.userRepository.deleteById(userId);
+    }
+
+    public Mono<Void> deleteByUsernameAndEmail(String username, String email) {
+        return this.userRepository.deleteUsersByUsernameAndEmail(username, email);
     }
 }
