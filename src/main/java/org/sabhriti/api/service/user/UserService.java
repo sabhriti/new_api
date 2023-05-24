@@ -3,13 +3,17 @@ package org.sabhriti.api.service.user;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.sabhriti.api.dal.model.user.User;
+import org.sabhriti.api.dal.model.user.UserActivationStatus;
 import org.sabhriti.api.dal.repository.UserRepository;
 import org.sabhriti.api.exception.AlreadyExistsException;
+import org.sabhriti.api.exception.InactiveUserRequestedException;
 import org.sabhriti.api.service.email.PasswordCreationEmailService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -49,6 +53,7 @@ public class UserService {
 
     public Mono<User> updatePassword(String password, User user) {
         user.setPassword(this.passwordEncoder.encode(password));
+        user.setActivationStatus(UserActivationStatus.ACTIVE);
         user.setIsInitialPassword(false);
 
         return this.userRepository.save(user);

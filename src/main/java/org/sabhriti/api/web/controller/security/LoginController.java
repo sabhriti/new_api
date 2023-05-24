@@ -2,6 +2,8 @@ package org.sabhriti.api.web.controller.security;
 
 import lombok.RequiredArgsConstructor;
 import org.sabhriti.api.dal.model.user.User;
+import org.sabhriti.api.dal.model.user.UserActivationStatus;
+import org.sabhriti.api.exception.InactiveUserRequestedException;
 import org.sabhriti.api.exception.InvalidCredentialsException;
 import org.sabhriti.api.service.security.JwtTokenProvider;
 import org.sabhriti.api.service.user.UserService;
@@ -30,12 +32,13 @@ public class LoginController {
         return this.userService
                 .findByUsername(loginRequest.username())
                 .flatMap(user -> {
-                    if (this.passwordMatches(loginRequest, user)) {
-                        return Mono.just(new LoginResponse(this.jwtTokenProvider.generateToken(user)));
-                    } else {
+                    if (!this.passwordMatches(loginRequest, user)) {
                         return Mono.error(new InvalidCredentialsException("invalid password"));
+                    } else if (!user.getActivationStatus().equals(UserActivationStatus.ACTIVE)) {
+                        return Mono.error(new InactiveUserRequestedException("not an active user"));
+                    } else {
+                        return Mono.just(new LoginResponse(this.jwtTokenProvider.generateToken(user)));
                     }
-
                 })
                 .switchIfEmpty(Mono.error(new InvalidCredentialsException("invalid username")));
 

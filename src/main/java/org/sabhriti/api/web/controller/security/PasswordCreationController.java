@@ -37,10 +37,10 @@ public class PasswordCreationController {
                     if (!userToken.getIsUsed() && userToken.getExpiresOn().isAfter(LocalDateTime.now())) {
                         return this.checkForUserAndUpdatePassword(createPasswordRequest, userToken);
                     } else {
-                        return Mono.error(new InvalidTokenException("The token has been already used."));
+                        return Mono.error(new InvalidTokenException("token has been already used"));
                     }
                 })
-                .switchIfEmpty(this.createNotFoundError("Invalid token provided. Cannot be located in database."));
+                .switchIfEmpty(this.createNotFoundError("invalid token provided"));
     }
 
     private Mono<User> checkForUserAndUpdatePassword(CreatePasswordRequest signupRequest, UserToken userToken) {
@@ -55,14 +55,14 @@ public class PasswordCreationController {
                                 .save(userToken)
                                 .flatMap(userToken1 -> this.doUpdatePassword(signupRequest, user));
                     } else {
-                        return Mono.error(new BadPasswordException("The old password is not correct."));
+                        return Mono.error(new BadPasswordException("old password is not correct"));
                     }
-                }).switchIfEmpty(this.createNotFoundError("User associated with the token not found."));
+                }).switchIfEmpty(this.createNotFoundError("user associated with the token not found"));
     }
 
     private Mono<User> doUpdatePassword(CreatePasswordRequest signupRequest, User user) {
         if (this.passwordEncoder.matches(signupRequest.password(), user.getPassword())) {
-            return Mono.error(new BadPasswordException("New password and the old password cannot be same."));
+            return Mono.error(new BadPasswordException("new password and the old password are same"));
         } else {
             return this.userService.updatePassword(signupRequest.password(), user);
         }
